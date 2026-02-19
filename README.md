@@ -1,72 +1,49 @@
 # 🚀 Software Engineering: Under The Hood
 
-ეს არის ჩემი პირადი გზამკვლევი პროგრამული ინჟინერიის რთული საკითხების "გლეხურად" და გასაგებად ასახსნელად. აქ თავმოყრილია ყველაფერი, რაც პროგრამირების "კაპოტის ქვეშ" ხდება.
+ეს არის ჩემი პირადი ცოდნის ბაზა, სადაც ვაგროვებ პროგრამული ინჟინერიის რთული საკითხების "გლეხურად" და გასაგებად ასახსნელად. 
 
-## 📂 Table of Contents
-1. [🏛️ The Evolution of Memory: Why two worlds?](#1-the-evolution-of-memory-why-two-worlds)
-2. [⚡ Compiler Internals: Structs, Static & JIT](#2-compiler-internals-structs-static--jit)
-3. [🕵️ Memory Deceptions: Stack leaks into Heap](#3-memory-deceptions-stack-leaks-into-heap)
-4. [♻️ Resource Management: GC, ArrayPool & Streams](#4-resource-management-gc-arraypool--streams)
-5. [🌐 Infrastructure & Scaling: Pods & Load Balancers](#5-infrastructure--scaling-pods--load-balancers)
+აქ არ ვწერ მხოლოდ კოდს — აქ ვხსნი, თუ რა ხდება **"კაპოტის ქვეშ"** (Memory, Threads, OS, Infrastructure).
 
 ---
 
-## 1. The Evolution of Memory: Why two worlds? <a name="1-the-evolution-of-memory-why-two-worlds"></a>
+## 📖 ცოდნის რუკა (Modules)
 
-### 📜 The Chaos Era: Only Heap
-თავდაპირველად არსებობდა მხოლოდ ერთი დიდი მეხსიერება — **Heap**. როცა პროგრამას რამე სჭირდებოდა, ის ითხოვდა ადგილს ამ დიდ „საწყობში“.
-* **The Problem:** წარმოიდგინე საწყობი, სადაც ნივთებს უწესრიგოდ ყრიან. როცა რაღაცას ვასრულებთ, ხელით უნდა გვახსოვდეს ნივთის გადაგდება. თუ დაგვავიწყდა — ხდება **Memory Leak**. თუ ბევრჯერ ვითხოვთ პატარა ადგილებს, საწყობი „დაცხრილული“ ხდება (**Fragmentation**) და დიდი ნივთისთვის ადგილი აღარ რჩება.
+ყველა თემა დეტალურად არის გაშლილი ჩემს **[Wiki-ს გვერდებზე](../../wiki)**.
 
-### 🏗️ The Order Era: Introducing the Stack
-ინჟინრები მიხვდნენ: ფუნქციების უმეტესობას მონაცემები მხოლოდ მუშაობის პროცესში სჭირდება. ასე გაჩნდა **Stack**.
-* **Why Stack?** სისწრაფისთვის და ავტომატური წესრიგისთვის. ის მუშაობს LIFO (Last-In, First-Out) პრინციპით. დაამთავრა ფუნქციამ მუშაობა? **CPU** უბრალოდ წევს **Stack Pointer**-ს ქვევით და ყველაფერი წამში „დავიწყებულია“.
+### 🧠 [Module 1: Memory Management](../../wiki/Stack-vs-Heap-Evolution)
+* **Stack vs Heap:** მეხსიერების ევოლუცია და პოინტერები.
+* **GC Generations:** როგორ მუშაობს .NET-ის "დამლაგებელი".
+* **IDisposable:** RAM-ის მიღმა არსებული რესურსების მართვა.
 
+### 🧵 [Module 2: Multithreading](../../wiki/Tasks-vs-Threads)
+* **Threads vs Tasks:** მზარეულები და შეკვეთები.
+* **Async/Await:** როგორ არ "გავყინოთ" აპლიკაცია მუშაობისას.
 
-
----
-
-## 2. Compiler Internals: Structs, Static & JIT <a name="2-compiler-internals-structs-static--jit"></a>
-
-### 💎 Value Types (Struct) vs Reference Types (Class)
-* **Struct:** კომპილერი მას აღიქვამს, როგორც ერთიან ბლოკს. ის პირდაპირ **Stack**-ზე იდება.
-* **Class:** კომპილერი მას ყოფს ორად: **Pointer** (მისამართი) **Stack**-ზე და რეალური მონაცემები **Heap**-ზე.
-
-### ⚡ JIT (Just-In-Time) Compiler & Inlining
-**JIT** არის შენი კოდის პირადი ოპტიმიზატორი. ის ხედავს ხშირად გამოძახებად მეთოდებს და მათ პირდაპირ **Native Code**-ში თარგმნის.
-* **Inlining:** თუ მეთოდი პატარაა, **JIT** მას საერთოდ აქრობს და მის შიგთავსს პირდაპირ გამომძახებელ კოდში სვამს, რომ **Stack**-ზე ზედმეტი **Stack Frame**-ის აშენება არ მოუწიოს.
+### 🌐 [Module 3: Infrastructure](../../wiki/Pods-and-Scaling)
+* **Scaling:** როდის და რატომ სკალირდება პოდები.
+* **Architecture:** სისტემური დიზაინის საფუძვლები.
 
 ---
 
-## 3. Memory Deceptions: When Stack leaks into Heap <a name="3-memory-deceptions-stack-leaks-into-heap"></a>
+## 📊 Learning Progress Tracker
 
-ზოგჯერ გვგონია, რომ მონაცემი **Stack**-ზეა, მაგრამ ის სინამდვილეში **Heap**-ზე „იპარება“:
-* **Boxing:** როცა **Value Type** (მაგ. int) გადაგვყავს **Object**-ში. მონაცემი სტეკიდან გადადის ჰიპზე, რაც პერფორმანსისთვის „მტკივნეულია“.
-* **Closures & Lambdas:** თუ ფუნქციის შიგნით იყენებ ლოკალურ ცვლადს ლამბდაში, ის ცვლადი **Heap**-ზე გადაბარგდება, რადგან ლამბდამ შეიძლება ფუნქციის დასრულების შემდეგაც იცოცხლოს.
-* **Async/Await:** `await`-ზე მეთოდის მდგომარეობა (**State Machine**) დროებით ინახება **Heap**-ზე, რომ **Thread**-ი გათავისუფლდეს და სხვა საქმე აკეთოს.
+ეს ცხრილი მეხმარება თვალი ვადევნო, რა თემები მაქვს უკვე დამუშავებული:
 
-
-
----
-
-## 4. Resource Management: GC, ArrayPool & Streams <a name="4-resource-management-gc-arraypool--streams"></a>
-
-### 🧹 Garbage Collector (GC)
-ეს არის „საწყობის დამლაგებელი“. ის პერიოდულად ამოწმებს — რომელიმე **Pointer** (სტეკიდან) კიდევ უყურებს ამ ობიექტს ჰიპზე? თუ არა — ნაგავში!
-
-### ♻️ ArrayPool & Streams (Efficiency)
-* **ArrayPool:** ნუ ქმნი ახალ **Byte Array**-ს ყოველ წამს. გამოიყენე **ArrayPool** — ეს არის „ჭურჭლის სარეცხი მანქანა“. გამოიყენე თეფში, გარეცხე და დააბრუნე.
-* **Streams:** ნუ ტვირთავ მთელ ფაილს **RAM**-ში. გამოიყენე ბუფერირებული წაკითხვა (ყლუპ-ყლუპად), რომ მეხსიერება არ გაივსოს.
+| თემა | სტატუსი | Key Takeaway |
+| :--- | :--- | :--- |
+| **Memory Fundamentals** | ✅ Done | Stack = წესრიგი, Heap = საწყობი. |
+| **Garbage Collection** | ✅ Done | Gen 0, 1, 2 – რაც დიდხანს ცოცხლობს, მით "ძვირია". |
+| **Async Programming** | ⏳ In Progress | Task-ები ThreadPool-ის წინააღმდეგ. |
+| **Data Structures** | 📅 Upcoming | Dictionary-ს Hash Table და List-ის დინამიურობა. |
 
 ---
 
-## 5. Infrastructure & Scaling: Pods & Load Balancers 🌐 <a name="5-infrastructure--scaling-pods--load-balancers"></a>
+## 🛠️ როგორ გამოვიყენოთ ეს რეპოზიტორია?
 
-როცა შენი კოდი **Memory Management**-ს არასწორად აკეთებს, **Pod** იწყებს „გასივებას“.
-* **Vertical Scaling:** პოდს ვუმატებთ **RAM**-ს და **CPU**-ს (ვზრდით ერთ სამზარეულოს).
-* **Horizontal Scaling:** ვამატებთ მეტ პოდს (ვხსნით მეტ სამზარეულოს).
-* **Load Balancer:** ის არის „ადმინისტრატორი“, რომელიც შემოსულ ტრაფიკს იმ პოდში უშვებს, რომელიც ყველაზე ნაკლებადაა დატვირთული.
+თუ გინდა სიღრმეებში ჩასვლა, გამოიყენე **მარჯვენა მენიუ (Sidebar)** Wiki-ს სექციაში. თითოეული გვერდი დაყოფილია:
+1. **ისტორია:** რატომ შეიქმნა ეს ტექნოლოგია?
+2. **მექანიზმი:** როგორ მუშაობს შიგნიდან?
+3. **გლეხურად:** მარტივი ანალოგია ცხოვრებიდან.
 
 ---
-
-### 💡 Summary for Engineers
-ამ ყველაფრის ცოდნა ნიშნავს, რომ შენ არ წერ მხოლოდ კოდს — შენ მართავ კომპიუტერის რესურსებს. ყოველი `new` ნიშნავს **Heap**-ზე გასვლას, ყოველი `static` ნიშნავს მუდმივ ადგილს მეხსიერებაში, ხოლო ყოველი `async` ნიშნავს ჭკვიანურ **Thread**-მენეჯმენტს.
+*Created with ❤️ for self-growth and deep engineering understanding.*
